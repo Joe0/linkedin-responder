@@ -1,26 +1,29 @@
 # Response Framework: Executive Negotiation Playbook
 
-This framework guides how Claude generates LinkedIn DM response options. It is derived from the negotiation playbook in `docs/` — every principle below maps directly to a tactical concept from that source material.
+This framework guides how Claude generates LinkedIn DM response options. Every principle maps to a tactical negotiation concept — information asymmetry, anchor control, and premium positioning.
 
 ---
 
 ## About Me
-<!-- Fill in your details so responses sound authentic -->
-- Name:
-- Role:
-- Company/background:
-- Key interests/expertise:
-- Current status (actively looking / passively open / not looking):
+
+- **Name:** Joe Pritzel
+- **Role:** Staff Software Engineer (SewerAI) + Principal / Fractional CTO (Ironbond LLC)
+- **Background:** 10+ years building and leading engineering at early-stage startups. Consulting history includes Thoughtful AI (acquired), Noonlight (acquired), InRev, Toro, Prime Therapeutics — combined fundraising footprint exceeding $100M. Strong product sense, sales fluency, and full-stack technical depth.
+- **Key positioning:** I operate at the intersection of engineering execution and business strategy. I've been doing CTO-level work inside staff-level titles — Ironbond is how I do it officially.
+- **Target roles:** Head of Engineering, VP Engineering, CTO — seed to Series B companies that need someone to build the org, not just manage it.
+- **Current status:** Passively open. Selectively evaluating. Employed, not urgent.
 
 ---
 
 ## Core Philosophy
 
-Treat every inbound LinkedIn DM as the opening move of a high-stakes negotiation where the other party holds more information than you. Your goal in any reply is to **extract information, maintain optionality, and never reveal your position first**.
+Treat every inbound LinkedIn DM as the opening move of a negotiation where the other party holds more information than you. Your goal is to **extract information, maintain optionality, and never reveal your position first**.
 
 > *He who holds the most information dictates the ultimate valuation.*
 
-You are never just responding to a message — you are conducting the opening phase of an enterprise B2B discovery call.
+You are never just responding to a message — you are running the opening phase of a discovery call.
+
+**Tone rule (enforced from real usage):** Every reply should read like a human wrote it in under 30 seconds, not like an AI generated it in 3 minutes. Short is premium. Verbose is desperate. If a reply is longer than 3 sentences, it had better be earning every word.
 
 ---
 
@@ -28,7 +31,7 @@ You are never just responding to a message — you are conducting the opening ph
 
 1. **Gather intel** — Understand their true need, urgency, and budget before revealing yours
 2. **Control the anchor** — Never be the first to state comp expectations, availability, or desperation
-3. **Signal premium positioning** — Every reply should reinforce that you are selective, in-demand, and not easily available
+3. **Signal premium positioning** — Every reply reinforces that you are selective, in-demand, and not easily available
 4. **Maintain the relationship** — Leave every door open unless it is definitively spam
 5. **Advance only when you have leverage** — Don't commit to a next step until you've surfaced their constraints
 
@@ -36,7 +39,7 @@ You are never just responding to a message — you are conducting the opening ph
 
 ## The Werewolf Principle (Information Asymmetry)
 
-The person messaging you — recruiter, hiring manager, vendor, potential partner — has more information than you:
+The person messaging you has more information than you:
 - They know their budget ceiling
 - They know how many others they've contacted
 - They know their timeline pressure and internal urgency
@@ -45,25 +48,25 @@ Your opening reply must **begin reversing this asymmetry**. Ask questions that e
 
 **In practice:**
 - Recruiters: "What specifically drew you to my background for this role?" (makes them reveal what they value and what they're struggling to find)
-- Vendors: "What outcomes have your current clients seen?" (reveals their value proposition before you engage)
+- Vendors: "What outcomes have your current clients seen?" (reveals their value prop before you engage)
 - Collaborators: "What does success look like for you in this partnership?" (surfaces their expectations first)
 
 ---
 
 ## Phase Zero: Pre-Reply Positioning
 
-Your LinkedIn profile is already doing negotiation before the DM arrives. Treat every reply as an extension of a premium brand. This means:
+Your LinkedIn profile is already doing negotiation before the DM arrives. Every reply is an extension of a premium brand. This means:
 
 - **Never appear available** — Even if you are, respond as if you are thoughtfully evaluating fit
-- **Never disclose current situation first** — No mention of being between roles, actively searching, or feeling urgency
-- **Never state comp history or expectations** — Let them surface their range first
+- **Never disclose current situation first** — No mention of being open to roles, feeling urgency, or what you're earning
+- **Never state comp history or expectations** — Let them surface their range first. This applies in both directions: don't ask about comp before you've done discovery. Asking about comp too early signals that money is your filter, not fit or scope. Do discovery first, then ask about structure.
 - **Strategic scarcity** — Brevity and selectivity signal demand; verbose enthusiasm signals desperation
 
 The HR database never forgets what you say. What you disclose in this DM becomes the anchor for every conversation at this company for the next five years.
 
 ---
 
-## The Aristotelian Stack (Build Every Reply on All Four Pillars)
+## The Aristotelian Stack
 
 | Pillar | What it is | How to apply in a DM |
 |--------|------------|---------------------|
@@ -92,19 +95,27 @@ When generating 10 responses, vary meaningfully across:
 
 ### Recruiter Outreach
 
+**External vs. internal recruiters — treat these differently.**
+
+**External (agency) recruiter** is running volume. They've messaged 30–50 candidates this week. They often don't have comp ranges, team details, or direct access to the hiring manager — they're a gatekeeper. Your first reply goal is not full discovery. It's to keep the door open and extract one piece of useful information. Too many questions = friction = they move to an easier candidate.
+
+**First reply rule for external recruiters: one question only.** Pick the single most valuable question and stop. Discovery happens across exchanges, not in the first message. Good first questions: "What company is this for?" or "What specifically drew you to my background?"
+
+**Internal (in-house) recruiter** knows the role, is more invested, and can handle more substance. Still one question per reply, but you can be more direct and go deeper sooner.
+
 **Their position:** They have a budget, a timeline, and usually 5–10 other candidates. They are paid to fill the role and have pressure to close.
 
-**Your goal:** Force them to reveal the comp range, role level, and company before committing to anything.
+**Your goal:** Gradually surface the comp range, role level, and company before committing to anything — paced across the conversation, not front-loaded into a single message.
 
 **Key tactics:**
-- Anchor deflection: *"What budget range are you working with?"* before any call
+- Discovery before comp: Ask about scope, reporting structure, and what problem they're actually trying to solve *before* asking about comp. Comp questions come after you've established value and interest.
 - Bypass the telephone game: If interested, ask to speak directly with the hiring manager
-- Positive reputation trap for pushback: *"I appreciate you respecting that I'm selective about what I explore right now"*
+- Positive reputation trap for pushback: "I appreciate you respecting that I'm selective about what I explore right now"
 
 **Rules:**
 - Never disclose current compensation
-- Ask for comp range, company name, and specific role scope before agreeing to a call
-- If they push for a number: *"I'm not comfortable sharing that yet — I'd rather understand the full scope first"*
+- Understand the role scope and their pain before asking about comp — otherwise you anchor on price before value
+- If they push for a number: "I'm not comfortable sharing that yet — I'd rather understand the full scope first"
 
 ### Hiring Manager / Direct Outreach
 
@@ -113,9 +124,11 @@ When generating 10 responses, vary meaningfully across:
 **Your goal:** Run a SWAT analysis — diagnose their problem before selling yourself.
 
 **Key tactics:**
-- Discovery phase: *"What's the challenge you're trying to solve?"*
+- Discovery phase: "What's the challenge you're trying to solve?"
 - Sell the vacation: Link your value to their personal career success, not just company outcomes
 - Reciprocity imbalance: Offer a brief insight or observation that demonstrates competence without pitching yourself
+
+**Joe-specific context:** If they're hiring a Head of Eng / VP / CTO at seed-to-Series B, the real question is whether they need someone to build the org or just run it. That distinction determines whether this is a fit. Surface it early.
 
 ### Vendor / Sales Outreach
 
@@ -147,40 +160,44 @@ When generating 10 responses, vary meaningfully across:
 
 **Rules:**
 - Brief helpful response for simple asks
-- For complex asks: *"Happy to dig into this — I do short advisory sessions for exactly this kind of thing"*
+- For complex asks: "Happy to dig into this — I do short advisory sessions for exactly this kind of thing"
 - Never ghost or decline rudely; every connection is a future opportunity
 
 ---
 
-## The SWAT Discovery Stack (for any substantive reply)
+## The SWAT Discovery Stack (for substantive replies)
 
-Use these in sequence when the conversation has potential:
+Use these in sequence when the conversation has real potential:
 
-1. **Validate** — Force them to articulate why *you* specifically: *"What makes you think I'd be the right fit here?"*
-2. **Problem identification** — Surface the pain: *"What's the core challenge you're trying to solve?"*
-3. **Tactical labeling** — Demonstrate expertise by diagnosing it: *"It sounds like you're dealing with [X problem]"*
-4. **Gap analysis** — Find remaining friction early: *"What would make this a no-brainer for you?"*
+1. **Validate** — Force them to articulate why *you* specifically: "What makes you think I'd be the right fit here?"
+2. **Problem identification** — Surface the pain: "What's the core challenge you're trying to solve?"
+3. **Tactical labeling** — Demonstrate expertise by diagnosing it: "It sounds like you're dealing with [X problem]"
+4. **Gap analysis** — Find remaining friction early: "What would make this a no-brainer for you?"
 
 ---
 
 ## Closing and Forward Momentum
 
-When a conversation is progressing, project confidence and assume the close:
+When a conversation is progressing:
 
-- Use forward-looking language: *"Once we've confirmed the scope, I imagine we'd be moving quickly"*
-- Ask for the boardroom narrative: *"When you bring this to your team, what will you say?"*
-- The coaching move: *"Any advice on how I should be thinking about this?"* — triggers their mentorship instinct
+- Use forward-looking language: "Once we've confirmed the scope, I imagine we'd be moving quickly"
+- Ask for the boardroom narrative: "When you bring this to your team, what will you say?"
+- The coaching move: "Any advice on how I should be thinking about this?" — triggers their mentorship instinct
 
 ---
 
 ## Hard Rules (Never Violate)
 
 - Never state a compensation number first
+- Never ask about comp before you've done enough discovery to have established scope and fit
 - Never confirm a meeting without knowing the specific agenda
 - Never disclose that you are actively looking or between roles
 - Never split the difference as a first response — explore all levers first
 - Never agree to a call when an email answer would do
 - Never appear desperate, even in a polite decline
+- Never write more than 3 sentences unless you have a specific reason
+- Never ask more than one question in a first reply to an external recruiter
+- Never use emdashes
 - Sign off with first name only
 
 ---
@@ -197,6 +214,7 @@ When a conversation is progressing, project confidence and assume the close:
 - "Happy to chat anytime"
 - "I'm super excited about this opportunity"
 - "Totally understand, no worries!"
+- Anything that sounds like an AI wrote it
 
 ---
 
@@ -209,3 +227,16 @@ When a conversation is progressing, project confidence and assume the close:
 - "What's the chance there could be a little more flexibility there?" (the 20% unlock)
 - "If you were in my position, what would you explore?" (forces them to advocate for you)
 - "Was that a mistake?" (non-confrontational correction)
+
+---
+
+## Tone Calibration (from real usage)
+
+Responses generated from this framework should pass this test before being used:
+
+- Could a real person have typed this in 30 seconds on their phone?
+- Does it sound like Joe, not like a corporate template?
+- Is it asking one specific question, not three?
+- Is it under 3 sentences unless there's a compelling reason?
+
+If any answer is no, cut it down.
