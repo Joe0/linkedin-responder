@@ -24,11 +24,6 @@ spec:
           env:
             - name: PORT
               value: "8000"
-            - name: ANTHROPIC_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: linkedin-responder-secrets
-                  key: ANTHROPIC_API_KEY
           volumeMounts:
             - name: data
               mountPath: /app/data
@@ -36,6 +31,14 @@ spec:
               mountPath: /app/uploads
             - name: instructions
               mountPath: /app/instructions
+            - name: claude-config
+              mountPath: /root/.claude/config.json
+              subPath: config.json
+              readOnly: true
+            - name: claude-config
+              mountPath: /root/.claude/.credentials.json
+              subPath: credentials.json
+              readOnly: true
           resources:
             requests:
               memory: "512Mi"
@@ -65,3 +68,6 @@ spec:
         - name: instructions
           persistentVolumeClaim:
             claimName: linkedin-responder-instructions
+        - name: claude-config
+          secret:
+            secretName: claude-config
