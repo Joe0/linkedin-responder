@@ -1,0 +1,31 @@
+# Environment
+.env
+*.env
+
+# Secrets
+k8s/secret.yaml
+
+# Data and uploads (user-generated content)
+data/
+uploads/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# Node
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkedin-responder
+  namespace: linkedin-responder
+  labels:
+    app: linkedin-responder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkedin-responder
+  template:
+    metadata:
+      labels:
+        app: linkedin-responder
+    spec:
+      containers:
+        - name: app
+          image: 172.19.76.103:30500/linkedin-responder:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PORT
+              value: "8000"
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: linkedin-responder-secrets
+                  key: ANTHROPIC_API_KEY
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+            - name: uploads
+              mountPath: /app/uploads
+            - name: instructions
+              mountPath: /app/instructions
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: linkedin-responder-data
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: linkedin-responder-uploads
+        - name: instructions
+          persistentVolumeClaim:
+            claimName: linkedin-responder-instructions

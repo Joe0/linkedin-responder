@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Reply to {{ session.participant_name }}{% endblock %}
+{% block content %}
+
+<div style="margin-bottom:16px;">
+  <a href="/" style="color:#0a66c2; text-decoration:none; font-size:0.9rem;">&#8592; Back to inbox</a>
+  &nbsp;·&nbsp;
+  <a href="/conversation/{{ session.conversation_id }}" style="color:#0a66c2; text-decoration:none; font-size:0.9rem;">
+    View full conversation
+  </a>
+</div>
+
+{% if request.query_params.get('chosen') %}
+<div class="card" style="background:#f0fdf4; border:1px solid #86efac; margin-bottom:16px;">
+  <strong>&#x2714; Reply saved.</strong> Copy it below and paste it into LinkedIn.
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="label">Message from</div>
+  <strong style="font-size:1.05rem;">{{ session.participant_name }}</strong>
+  <div class="message-bubble mt-2">{{ session.message_body }}</div>
+</div>
+
+{% if session.chosen_body %}
+  <!-- Already chosen — show the result -->
+  <div class="card" style="border:2px solid #0a66c2;">
+    <div class="label" style="margin-bottom:8px;">Your chosen reply</div>
+    <div id="chosen-text" style="white-space:pre-wrap; font-size:0.95rem;">{{ session.chosen_body }}</div>
+    <button onclick="copyChosen()" class="btn btn-secondary mt-4" style="margin-top:12px;">
+      Copy to clipboard
+    </button>
+    {% if session.feedback %}
+      <div style="margin-top:8px; font-size:0.8rem; color:#6b7280;">Feedback: {{ session.feedback }}</div>
+    {% endif %}
+  </div>
+{% else %}
+  <h3 style="margin:24px 0 12px;">Generated Responses</h3>
+  <p style="color:#6b7280; font-size:0.9rem; margin-bottom:16px;">
+    Click a response to select it. You can edit before saving.
+  </p>
+
+  <form method="post" action="/session/{{ session.id }}/choose">
+    <div id="response-list">
+      {% for r in responses %}
+      <div class="card response-card" id="card-{{ loop.index0 }}"
+           onclick="selectResponse({{ loop.index0 }}, this)"
+           style="cursor:pointer; border:2px solid transparent; transition:border-color 0.15s;">
+        <div class="flex items-center justify-between" style="margin-bottom:8px;">
+          <span class="badge" style="background:#e0f2fe; color:#0369a1;">{{ r.tone_label or r.tone }}</span>
+          <span style="font-size:0.75rem; color:#9ca3af;">#{{ loop.index }}</span>
+        </div>
+        <div class="response-text" style="white-space:pre-wrap; font-size:0.95rem;">{{ r.body }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <input type="hidden" name="response_index" id="response_index" value="-1">
+
+    <div class="card mt-4" style="border:2px solid #e5e7eb;" id="custom-card">
+      <div class="label" style="margin-bottom:6px;">Edit or write your own:</div>
+      <textarea name="custom_body" id="custom_body" rows="5"
+                placeholder="Click a response above to pre-fill, or type here..."
+                oninput="onCustomEdit()"></textarea>
+    </div>
+
+    <div class="card mt-2">
+      <div class="label" style="margin-bottom:6px;">Feedback (optional — improves future suggestions):</div>
+      <input type="text" name="feedback" placeholder="e.g. too long, needed more warmth, perfect...">
+    </div>
+
+    <div class="flex gap-2 mt-4" style="margin-bottom:32px;">
+      <button type="submit" class="btn btn-primary" id="save-btn" disabled>Save &amp; copy reply</button>
+      <button type="button" class="btn btn-secondary" onclick="clearSelection()">Clear</button>
+    </div>
+  </form>
+{% endif %}
+
+<script>
+  function selectResponse(index, card) {
+    document.querySelectorAll('.response-card').forEach(c => c.style.borderColor = 'transparent');
+    card.style.borderColor = '#0a66c2';
+    document.getElementById('response_index').value = index;
+    document.getElementById('custom_body').value = card.querySelector('.response-text').innerText;
+    document.getElementById('custom-card').style.borderColor = '#0a66c2';
+    document.getElementById('save-btn').disabled = false;
+  }
+
+  function onCustomEdit() {
+    document.getElementById('response_index').value = -1;
+    document.getElementById('save-btn').disabled =
+      document.getElementById('custom_body').value.trim() === '';
+  }
+
+  function clearSelection() {
+    document.querySelectorAll('.response-card').forEach(c => c.style.borderColor = 'transparent');
+    document.getElementById('response_index').value = -1;
+    document.getElementById('custom_body').value = '';
+    document.getElementById('custom-card').style.borderColor = '#e5e7eb';
+    document.getElementById('save-btn').disabled = true;
+  }
+
+  function copyChosen() {
+    navigator.clipboard.writeText(document.getElementById('chosen-text').innerText);
+    event.target.textContent = 'Copied!';
+    setTimeout(() => event.target.textContent = 'Copy to clipboard', 2000);
+  }
+</script>
+
+{% endblock %}

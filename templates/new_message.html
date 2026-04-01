@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}New Message — LinkedIn Responder{% endblock %}
+{% block content %}
+
+<div style="margin-bottom:16px;">
+  <a href="/" style="color:#0a66c2; text-decoration:none; font-size:0.9rem;">&#8592; Back</a>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Paste a message</h2>
+  <p style="color:#6b7280; font-size:0.9rem; margin-bottom:20px;">
+    Paste the DM text, or upload a screenshot — Claude will extract the text automatically.
+  </p>
+
+  <form method="post" action="/new" enctype="multipart/form-data" id="new-form">
+
+    <!-- Screenshot upload -->
+    <div style="margin-bottom:20px;">
+      <div class="label">Screenshot (optional)</div>
+      <div id="drop-zone"
+           style="border:2px dashed #d1d5db; border-radius:8px; padding:24px; text-align:center;
+                  cursor:pointer; transition:border-color 0.15s; color:#9ca3af;"
+           onclick="document.getElementById('screenshot-input').click()"
+           ondragover="event.preventDefault(); this.style.borderColor='#0a66c2'"
+           ondragleave="this.style.borderColor='#d1d5db'"
+           ondrop="handleDrop(event)">
+        <div id="drop-label">&#128247; Drop screenshot here or click to upload</div>
+        <img id="preview" style="display:none; max-height:200px; margin-top:12px; border-radius:6px;">
+      </div>
+      <input type="file" id="screenshot-input" name="screenshot"
+             accept="image/*" style="display:none" onchange="previewFile(this)">
+    </div>
+
+    <!-- Message body -->
+    <div style="margin-bottom:16px;">
+      <div class="label">Message text</div>
+      <textarea name="message_body" id="message_body" rows="5"
+                placeholder="Paste the DM here... (or leave blank if uploading a screenshot)"></textarea>
+    </div>
+
+    <!-- Sender name -->
+    <div style="margin-bottom:16px;">
+      <div class="label">Sender name <span style="color:#9ca3af;">(auto-filled from screenshot if blank)</span></div>
+      <input type="text" name="sender_name" id="sender_name" placeholder="e.g. Jane Smith">
+    </div>
+
+    <!-- Conversation -->
+    <div style="margin-bottom:20px;">
+      <div class="label">Conversation</div>
+      <div style="display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px;">
+          <select name="conversation_id" id="conv-select"
+                  onchange="toggleNewConv(this)"
+                  style="width:100%; border:1px solid #d1d5db; border-radius:6px;
+                         padding:8px 10px; font-size:0.9rem; font-family:inherit;">
+            <option value="">— Start new conversation —</option>
+            {% if selected_conv %}
+              <option value="{{ selected_conv.id }}" selected>{{ selected_conv.participant_name }}</option>
+            {% endif %}
+            {% for c in conversations %}
+              {% if not selected_conv or c.id != selected_conv.id %}
+                <option value="{{ c.id }}">{{ c.participant_name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+        <div id="new-conv-name-wrap" style="flex:1; min-width:200px;
+             {% if selected_conv %}display:none{% endif %}">
+          <input type="text" name="new_conv_name" placeholder="New conversation name (defaults to sender name)">
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="submit-btn">
+      Generate responses
+    </button>
+    <span id="loading" style="display:none; margin-left:12px; color:#6b7280; font-size:0.9rem;">
+      Generating… (this takes ~15s)
+    </span>
+  </form>
+</div>
+
+<script>
+  function toggleNewConv(sel) {
+    const wrap = document.getElementById('new-conv-name-wrap');
+    wrap.style.display = sel.value ? 'none' : '';
+  }
+
+  function previewFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    showPreview(file);
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('drop-zone').style.borderColor = '#d1d5db';
+    const file = e.dataTransfer.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    document.getElementById('screenshot-input').files = dt.files;
+    showPreview(file);
+  }
+
+  function showPreview(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.getElementById('preview');
+      img.src = e.target.result;
+      img.style.display = 'block';
+      document.getElementById('drop-label').textContent = file.name;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  document.getElementById('new-form').addEventListener('submit', () => {
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('loading').style.display = 'inline';
+  });
+</script>
+
+{% endblock %}

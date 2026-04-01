@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Response Framework — LinkedIn Responder{% endblock %}
+{% block content %}
+
+<div style="margin-bottom: 16px;">
+  <a href="/" style="color: #0a66c2; text-decoration: none; font-size: 0.9rem;">&#8592; Back to inbox</a>
+</div>
+
+<div class="card">
+  <h2 style="margin-top: 0;">Response Framework</h2>
+  <p style="color:#6b7280; font-size:0.9rem;">
+    This Markdown document tells Claude how to write your responses.
+    Edit it to match your tone, context, and preferences.
+    Changes take effect immediately on the next generation.
+  </p>
+  <form method="post" action="/instructions">
+    <textarea name="content" rows="30" style="font-family: monospace; font-size: 0.88rem;">{{ content }}</textarea>
+    <button type="submit" class="btn btn-primary mt-4">Save Framework</button>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Inbox — LinkedIn Responder{% endblock %}
+{% block content %}
+
+<div class="flex items-center justify-between" style="margin: 24px 0 16px;">
+  <h2 style="margin:0;">Needs a reply ({{ pending|length }})</h2>
+  <a href="/new" class="btn btn-primary">+ New message</a>
+</div>
+
+{% if pending %}
+  {% for s in pending %}
+  <div class="card">
+    <div class="flex items-center justify-between">
+      <strong>{{ s.participant_name }}</strong>
+      <small style="color:#6b7280;">{{ s.created_at[:16].replace('T',' ') }}</small>
+    </div>
+    <div class="message-bubble mt-2">{{ s.message_body }}</div>
+    <a href="/session/{{ s.id }}" class="btn btn-primary">Pick a reply</a>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="card empty-state">
+    <div style="font-size:2rem;">&#x2709;</div>
+    <p>All caught up. <a href="/new">Paste a new message</a> to get started.</p>
+  </div>
+{% endif %}
+
+{% if conversations %}
+<h2 style="margin: 40px 0 12px;">Conversations</h2>
+<div class="card" style="padding:0; overflow:hidden;">
+  <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+    <thead>
+      <tr style="background:#f9fafb; border-bottom:1px solid #e5e7eb;">
+        <th style="padding:10px 16px; text-align:left;">Person</th>
+        <th style="padding:10px 16px; text-align:left;">Messages</th>
+        <th style="padding:10px 16px; text-align:left;">Last activity</th>
+        <th style="padding:10px 16px;"></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for c in conversations %}
+      <tr style="border-bottom:1px solid #f3f4f6;">
+        <td style="padding:10px 16px;">
+          <strong>{{ c.participant_name }}</strong>
+          {% if c.pending_count %}
+            <span class="badge badge-pending" style="margin-left:6px;">{{ c.pending_count }} pending</span>
+          {% endif %}
+        </td>
+        <td style="padding:10px 16px; color:#6b7280;">{{ c.message_count or 0 }}</td>
+        <td style="padding:10px 16px; color:#6b7280; font-size:0.8rem;">
+          {% if c.last_message_at %}{{ c.last_message_at[:10] }}{% endif %}
+        </td>
+        <td style="padding:10px 16px; display:flex; gap:6px;">
+          <a href="/conversation/{{ c.id }}" class="btn btn-secondary" style="padding:4px 10px; font-size:0.8rem;">View</a>
+          <a href="/new?conv_id={{ c.id }}" class="btn btn-primary" style="padding:4px 10px; font-size:0.8rem;">+ Message</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% endblock %}
