@@ -84,20 +84,15 @@ def _process_message(
             storage.update_session_status(session_id, "error", "Could not extract message text from screenshot")
             return
 
-        # Always try to extract name from text if still unknown
-        if sender_name == "Unknown":
-            extracted_name = image_extractor.extract_name_from_text(body)
-            if extracted_name:
-                sender_name = extracted_name
-                storage.update_message(msg_id, body, sender_name)
-                storage.update_conversation_participant(conv_id, sender_name)
-
-        responses = response_generator.generate_responses(
+        responses, resolved_name = response_generator.generate_responses(
             message_body=body,
             sender_name=sender_name,
             conversation_history=history,
             feedback_history=feedback_history,
         )
+        if resolved_name and resolved_name != sender_name:
+            storage.update_message(msg_id, body, resolved_name)
+            storage.update_conversation_participant(conv_id, resolved_name)
         storage.save_generated_responses(session_id, responses)
         storage.update_session_status(session_id, "ready")
     except Exception as e:
