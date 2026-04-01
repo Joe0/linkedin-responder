@@ -21,8 +21,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy app source
 COPY . .
 
-# Seed file: framework.md baked into image, copied to PVC on first boot
-RUN cp /app/instructions/framework.md /app/instructions/framework.md.seed
+# Seed file: baked outside the mounted volume path so PVC mount doesn't hide it
+RUN cp /app/instructions/framework.md /app/framework.md.seed
 
 # Persistent dirs (mounted as PVCs in production)
 VOLUME ["/app/data", "/app/uploads", "/app/instructions"]
