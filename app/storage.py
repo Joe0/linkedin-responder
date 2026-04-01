@@ -158,10 +158,20 @@ def get_conversation_messages(conv_id: int):
 def create_response_session(message_id: int) -> int:
     with get_conn() as conn:
         cur = conn.execute(
-            "INSERT INTO response_sessions (message_id) VALUES (?)",
+            "INSERT INTO response_sessions (message_id, status) VALUES (?, 'processing')",
             (message_id,)
         )
         return cur.lastrowid
+
+
+def fail_stuck_sessions():
+    """Mark any processing sessions as failed (called on startup after a restart)."""
+    with get_conn() as conn:
+        conn.execute("""
+            UPDATE response_sessions
+            SET status='error', error_message='Processing interrupted by server restart — please resubmit.'
+            WHERE status='processing'
+        """)
 
 
 def update_session_status(session_id: int, status: str, error_message: str = ""):

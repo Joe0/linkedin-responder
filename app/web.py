@@ -28,6 +28,7 @@ app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 @app.on_event("startup")
 async def startup():
     storage.init_db()
+    storage.fail_stuck_sessions()
 
 
 # --- Index ---
