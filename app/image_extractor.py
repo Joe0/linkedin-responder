@@ -30,10 +30,16 @@ If there are multiple messages, extract the most recent inbound one.
 No explanation, raw JSON only."""
 
 
-NAME_PROMPT = """Extract the sender's name from this LinkedIn message text. Return ONLY a JSON object:
-{{"sender_name": "First Last"}}
+NAME_PROMPT = """This is a LinkedIn DM that was sent TO the user. Identify the name of the person who sent it.
 
-If you cannot determine the name from the text, return {{"sender_name": ""}}.
+Look for:
+- Self-introductions: "I'm John", "My name is Jane", "This is Alex", "I am Sarah"
+- Signatures or sign-offs at the end of the message
+- Phrases like "I'm a recruiter at...", "I work at...", "I'm the CEO of..."
+- Any name they refer to themselves by
+
+Return ONLY a JSON object: {{"sender_name": "First Last"}}
+If the sender's name cannot be determined from the text, return {{"sender_name": ""}}.
 No explanation, raw JSON only.
 
 Message:

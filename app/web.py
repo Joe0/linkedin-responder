@@ -139,8 +139,13 @@ async def submit_new_message(
         existing = storage.find_conversation_by_name(new_conv_name.strip())
         conv_id = existing["id"] if existing else storage.create_conversation(new_conv_name.strip())
     else:
-        existing = storage.find_conversation_by_name(final_sender)
-        conv_id = existing["id"] if existing else storage.create_conversation(final_sender)
+        # Don't reuse an "Unknown" conversation — always create a fresh one so
+        # the background thread can rename it once the real name is extracted.
+        if final_sender != "Unknown":
+            existing = storage.find_conversation_by_name(final_sender)
+            conv_id = existing["id"] if existing else storage.create_conversation(final_sender)
+        else:
+            conv_id = storage.create_conversation("Unknown")
 
     # Save message immediately (placeholder body if screenshot-only)
     msg_id = storage.add_message(
