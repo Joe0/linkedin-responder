@@ -22,7 +22,21 @@
   <div class="message-bubble mt-2">{{ session.message_body }}</div>
 </div>
 
-{% if session.chosen_body %}
+{% if session.status == 'processing' %}
+  <div class="card" style="text-align:center; padding:40px 24px;">
+    <div style="font-size:1.15rem; font-weight:600; margin-bottom:8px;">Generating responses&hellip;</div>
+    <div style="color:#6b7280; font-size:0.9rem;">Usually takes 20&ndash;40 seconds. This page will update automatically.</div>
+    <div style="margin-top:20px; color:#9ca3af; font-size:0.8rem;">&#x23F3; processing</div>
+  </div>
+  <script>setTimeout(() => location.reload(), 3000);</script>
+{% elif session.status == 'error' %}
+  <div class="card" style="background:#fef2f2; border:1px solid #fca5a5;">
+    <strong>Generation failed.</strong>
+    {% if session.error_message %}
+      <div style="margin-top:6px; font-size:0.85rem; color:#b91c1c;">{{ session.error_message }}</div>
+    {% endif %}
+  </div>
+{% elif session.chosen_body %}
   <!-- Already chosen — show the result -->
   <div class="card" style="border:2px solid #0a66c2;">
     <div class="label" style="margin-bottom:8px;">Your chosen reply</div>

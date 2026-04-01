@@ -1,6 +1,7 @@
 """FastAPI web app."""
 import logging
 import shutil
+import threading
 import uuid
 from pathlib import Path
 
@@ -57,6 +58,52 @@ async def new_message_form(request: Request, conv_id: int = None):
     })
 
 
+def _process_message(
+    session_id: int,
+    msg_id: int,
+    conv_id: int,
+    body: str,
+    sender_name: str,
+    screenshot_path: str,
+    history: list,
+    feedback_history: list,
+):
+    """Background thread: extract name/body if needed, generate responses, mark ready."""
+    try:
+        # Extract from screenshot if no body yet
+        if not body and screenshot_path:
+            extracted = image_extractor.extract_from_screenshot(screenshot_path)
+            body = extracted["message_body"]
+            if not sender_name or sender_name == "Unknown":
+                sender_name = extracted["sender_name"] or "Unknown"
+            storage.update_message(msg_id, body, sender_name)
+            storage.update_conversation_participant(conv_id, sender_name)
+
+        if not body:
+            storage.update_session_status(session_id, "error", "Could not extract message text from screenshot")
+            return
+
+        # Always try to extract name from text if still unknown
+        if sender_name == "Unknown":
+            extracted_name = image_extractor.extract_name_from_text(body)
+            if extracted_name:
+                sender_name = extracted_name
+                storage.update_message(msg_id, body, sender_name)
+                storage.update_conversation_participant(conv_id, sender_name)
+
+        responses = response_generator.generate_responses(
+            message_body=body,
+            sender_name=sender_name,
+            conversation_history=history,
+            feedback_history=feedback_history,
+        )
+        storage.save_generated_responses(session_id, responses)
+        storage.update_session_status(session_id, "ready")
+    except Exception as e:
+        logger.error("Background processing failed for session %s: %s", session_id, e)
+        storage.update_session_status(session_id, "error", str(e))
+
+
 @app.post("/new")
 async def submit_new_message(
     request: Request,
@@ -67,9 +114,8 @@ async def submit_new_message(
     screenshot: UploadFile = File(None),
 ):
     screenshot_path = ""
-    extracted_sender = ""
 
-    # Handle screenshot upload
+    # Handle screenshot upload (fast — just saves file to disk)
     if screenshot and screenshot.filename:
         suffix = Path(screenshot.filename).suffix.lower()
         if suffix not in {".png", ".jpg", ".jpeg", ".webp", ".gif"}:
@@ -80,67 +126,44 @@ async def submit_new_message(
             shutil.copyfileobj(screenshot.file, f)
         screenshot_path = str(dest)
 
-        # Extract text from screenshot if no body was pasted
-        if not message_body.strip():
-            try:
-                extracted = image_extractor.extract_from_screenshot(screenshot_path)
-                message_body = extracted["message_body"]
-                extracted_sender = extracted["sender_name"]
-            except Exception as e:
-                logger.error("Image extraction failed: %s", e)
-                raise HTTPException(
-                    status_code=422,
-                    detail=f"Could not extract text from screenshot: {e}"
-                )
+    body = message_body.strip()
+    final_sender = sender_name.strip() or "Unknown"
 
-    if not message_body.strip():
-        raise HTTPException(status_code=400, detail="Message body is required")
-
-    # Resolve sender name
-    final_sender = sender_name.strip() or extracted_sender or "Unknown"
+    if not body and not screenshot_path:
+        raise HTTPException(status_code=400, detail="Message body or screenshot is required")
 
     # Resolve or create conversation
     if conversation_id.strip():
         conv_id = int(conversation_id)
     elif new_conv_name.strip():
-        # Check if conversation with that name already exists
         existing = storage.find_conversation_by_name(new_conv_name.strip())
-        if existing:
-            conv_id = existing["id"]
-        else:
-            conv_id = storage.create_conversation(new_conv_name.strip())
+        conv_id = existing["id"] if existing else storage.create_conversation(new_conv_name.strip())
     else:
-        # Fall back: use sender name as conversation name
         existing = storage.find_conversation_by_name(final_sender)
         conv_id = existing["id"] if existing else storage.create_conversation(final_sender)
 
-    # Save the message
+    # Save message immediately (placeholder body if screenshot-only)
     msg_id = storage.add_message(
         conversation_id=conv_id,
         sender_name=final_sender,
-        body=message_body.strip(),
+        body=body or "(extracting...)",
         is_mine=False,
         screenshot_path=screenshot_path,
     )
 
-    # Get conversation history for context
+    # Create session in processing state
+    session_id = storage.create_response_session(msg_id)
+
+    # Snapshot history before starting thread
     history = [dict(m) for m in storage.get_conversation_messages(conv_id)]
     feedback_history = storage.get_feedback_history()
 
-    # Generate responses
-    try:
-        responses = response_generator.generate_responses(
-            message_body=message_body.strip(),
-            sender_name=final_sender,
-            conversation_history=history,
-            feedback_history=feedback_history,
-        )
-    except Exception as e:
-        logger.error("Response generation failed: %s", e)
-        raise HTTPException(status_code=500, detail=f"Response generation failed: {e}")
-
-    session_id = storage.create_response_session(msg_id)
-    storage.save_generated_responses(session_id, responses)
+    # Start background processing and redirect immediately
+    threading.Thread(
+        target=_process_message,
+        args=(session_id, msg_id, conv_id, body, final_sender, screenshot_path, history, feedback_history),
+        daemon=True,
+    ).start()
 
     return RedirectResponse(url=f"/session/{session_id}", status_code=303)
 

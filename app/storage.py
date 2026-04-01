@@ -39,6 +39,8 @@ def init_db():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 message_id INTEGER NOT NULL,
                 created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                status TEXT NOT NULL DEFAULT 'processing',
+                error_message TEXT,
                 chosen_response_index INTEGER,
                 chosen_body TEXT,
                 chosen_at TEXT,
@@ -46,6 +48,14 @@ def init_db():
                 FOREIGN KEY (message_id) REFERENCES messages(id)
             );
 
+        """)
+        # Migrate existing tables if columns are missing
+        existing_cols = {row[1] for row in conn.execute("PRAGMA table_info(response_sessions)")}
+        if 'status' not in existing_cols:
+            conn.execute("ALTER TABLE response_sessions ADD COLUMN status TEXT NOT NULL DEFAULT 'ready'")
+        if 'error_message' not in existing_cols:
+            conn.execute("ALTER TABLE response_sessions ADD COLUMN error_message TEXT")
+        conn.executescript("""
             CREATE TABLE IF NOT EXISTS generated_responses (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 session_id INTEGER NOT NULL,
@@ -152,6 +162,30 @@ def create_response_session(message_id: int) -> int:
             (message_id,)
         )
         return cur.lastrowid
+
+
+def update_session_status(session_id: int, status: str, error_message: str = ""):
+    with get_conn() as conn:
+        conn.execute(
+            "UPDATE response_sessions SET status=?, error_message=? WHERE id=?",
+            (status, error_message, session_id)
+        )
+
+
+def update_message(msg_id: int, body: str, sender_name: str):
+    with get_conn() as conn:
+        conn.execute(
+            "UPDATE messages SET body=?, sender_name=? WHERE id=?",
+            (body, sender_name, msg_id)
+        )
+
+
+def update_conversation_participant(conv_id: int, name: str):
+    with get_conn() as conn:
+        conn.execute(
+            "UPDATE conversations SET participant_name=? WHERE id=? AND participant_name='Unknown'",
+            (name, conv_id)
+        )
 
 
 def save_generated_responses(session_id: int, responses: list[dict]):

@@ -30,6 +30,39 @@ If there are multiple messages, extract the most recent inbound one.
 No explanation, raw JSON only."""
 
 
+NAME_PROMPT = """Extract the sender's name from this LinkedIn message text. Return ONLY a JSON object:
+{{"sender_name": "First Last"}}
+
+If you cannot determine the name from the text, return {{"sender_name": ""}}.
+No explanation, raw JSON only.
+
+Message:
+{message_body}"""
+
+
+def extract_name_from_text(message_body: str) -> str:
+    """Try to extract sender name from message body text. Returns empty string if not found."""
+    prompt = NAME_PROMPT.format(message_body=message_body[:1000])
+    result = subprocess.run(
+        [_claude_bin(), "-p", prompt, "--output-format", "json"],
+        capture_output=True, text=True, timeout=30,
+    )
+    if result.returncode != 0:
+        return ""
+    try:
+        outer = json.loads(result.stdout)
+        raw = outer.get("result", result.stdout).strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+            raw = raw.strip()
+        data = json.loads(raw)
+        return data.get("sender_name", "").strip()
+    except Exception:
+        return ""
+
+
 def extract_from_screenshot(image_path: str) -> dict:
     """
     Given a path to a screenshot, return {sender_name, message_body}.
